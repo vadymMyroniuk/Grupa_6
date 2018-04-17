@@ -1,0 +1,7 @@
+/home/fafryk/TeamProject/client/build/CMakeFiles/install.dir
+/home/fafryk/TeamProject/client/build/CMakeFiles/list_install_components.dir
+/home/fafryk/TeamProject/client/build/CMakeFiles/rebuild_cache.dir
+/home/fafryk/TeamProject/client/build/CMakeFiles/RootProject.dir
+/home/fafryk/TeamProject/client/build/CMakeFiles/install/local.dir
+/home/fafryk/TeamProject/client/build/CMakeFiles/install/strip.dir
+/home/fafryk/TeamProject/client/build/CMakeFiles/edit_cache.dir
