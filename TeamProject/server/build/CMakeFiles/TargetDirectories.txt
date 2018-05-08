@@ -1,7 +1,7 @@
-/home/fafryk/TeamProject/server/build/CMakeFiles/install.dir
-/home/fafryk/TeamProject/server/build/CMakeFiles/list_install_components.dir
-/home/fafryk/TeamProject/server/build/CMakeFiles/rebuild_cache.dir
-/home/fafryk/TeamProject/server/build/CMakeFiles/RootProject.dir
-/home/fafryk/TeamProject/server/build/CMakeFiles/install/local.dir
-/home/fafryk/TeamProject/server/build/CMakeFiles/install/strip.dir
-/home/fafryk/TeamProject/server/build/CMakeFiles/edit_cache.dir
+/home/student/Pulpit/Grupa_6/TeamProject/server/build/CMakeFiles/install.dir
+/home/student/Pulpit/Grupa_6/TeamProject/server/build/CMakeFiles/list_install_components.dir
+/home/student/Pulpit/Grupa_6/TeamProject/server/build/CMakeFiles/rebuild_cache.dir
+/home/student/Pulpit/Grupa_6/TeamProject/server/build/CMakeFiles/server.dir
+/home/student/Pulpit/Grupa_6/TeamProject/server/build/CMakeFiles/install/strip.dir
+/home/student/Pulpit/Grupa_6/TeamProject/server/build/CMakeFiles/install/local.dir
+/home/student/Pulpit/Grupa_6/TeamProject/server/build/CMakeFiles/edit_cache.dir

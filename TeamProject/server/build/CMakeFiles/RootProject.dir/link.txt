@@ -1,1 +1,0 @@
-/usr/bin/c++    -Wall -pthread -O0 -g -std=c++11   CMakeFiles/RootProject.dir/sources/main.cpp.o  -o RootProject -rdynamic -ldl 

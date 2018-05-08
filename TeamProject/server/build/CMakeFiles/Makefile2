@@ -54,45 +54,45 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/fafryk/TeamProject/server
+CMAKE_SOURCE_DIR = /home/student/Pulpit/Grupa_6/TeamProject/server
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/fafryk/TeamProject/server/build
+CMAKE_BINARY_DIR = /home/student/Pulpit/Grupa_6/TeamProject/server/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/RootProject.dir
+# Target rules for target CMakeFiles/server.dir
 
 # All Build rule for target.
-CMakeFiles/RootProject.dir/all:
-	$(MAKE) -f CMakeFiles/RootProject.dir/build.make CMakeFiles/RootProject.dir/depend
-	$(MAKE) -f CMakeFiles/RootProject.dir/build.make CMakeFiles/RootProject.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/fafryk/TeamProject/server/build/CMakeFiles --progress-num=1,2 "Built target RootProject"
-.PHONY : CMakeFiles/RootProject.dir/all
+CMakeFiles/server.dir/all:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/depend
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/student/Pulpit/Grupa_6/TeamProject/server/build/CMakeFiles --progress-num=1,2 "Built target server"
+.PHONY : CMakeFiles/server.dir/all
 
 # Include target in all.
-all: CMakeFiles/RootProject.dir/all
+all: CMakeFiles/server.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/RootProject.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/fafryk/TeamProject/server/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/RootProject.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/fafryk/TeamProject/server/build/CMakeFiles 0
-.PHONY : CMakeFiles/RootProject.dir/rule
+CMakeFiles/server.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Pulpit/Grupa_6/TeamProject/server/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/server.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Pulpit/Grupa_6/TeamProject/server/build/CMakeFiles 0
+.PHONY : CMakeFiles/server.dir/rule
 
 # Convenience name for target.
-RootProject: CMakeFiles/RootProject.dir/rule
+server: CMakeFiles/server.dir/rule
 
-.PHONY : RootProject
-
-# clean rule for target.
-CMakeFiles/RootProject.dir/clean:
-	$(MAKE) -f CMakeFiles/RootProject.dir/build.make CMakeFiles/RootProject.dir/clean
-.PHONY : CMakeFiles/RootProject.dir/clean
+.PHONY : server
 
 # clean rule for target.
-clean: CMakeFiles/RootProject.dir/clean
+CMakeFiles/server.dir/clean:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/clean
+.PHONY : CMakeFiles/server.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/server.dir/clean
 
 .PHONY : clean
 
