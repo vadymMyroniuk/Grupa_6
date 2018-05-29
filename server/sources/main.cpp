@@ -32,9 +32,9 @@ void thread_client(int socket){
 
 				//memset(buffer, 0, sizeof buffer);
 				header* headerRequest = (header*) buffer;
-
+				code codeResponse;
 				if(headerRequest->msgId == 1){
-					code codeResponse;
+				
 
 					codeResponse.codeId = 200;
 					send(socket,&codeResponse,sizeof(code),0);
@@ -53,6 +53,15 @@ void thread_client(int socket){
 
 				}
 				else if(headerRequest->msgId == 2){
+					
+
+					codeResponse.codeId = 200;
+					send(socket,&codeResponse,sizeof(code),0);
+
+					recv( socket , buffer, 1024,0);
+					registration* registrationRequest = (registration*) buffer;
+
+					//odczyt z pliku
 
 				}
 				else {
@@ -93,6 +102,8 @@ int main(int argc, char const *argv[])
         perror("setsockopt");
         exit(EXIT_FAILURE);
     }
+
+    printf("\n=>Socket server has been created...\n");
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons( PORT );
@@ -115,10 +126,10 @@ while(1){
     if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
                        (socklen_t*)&addrlen))<0)
     {
-        perror("accept");
+        perror("accept error");
         exit(EXIT_FAILURE);
     }
-		std::cout << new_socket << '\n';
+		printf("=>Connected new client :socket_id = %c",new_socket);
 
 		std::thread t(thread_client,new_socket);
 		t.detach();
