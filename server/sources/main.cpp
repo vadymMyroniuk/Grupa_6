@@ -62,9 +62,29 @@ void thread_client(int socket){
 					registration* registrationRequest = (registration*) buffer;
 
 					//odczyt z pliku
+					std::ifstream fileUsers;
+					fileUsers.open("../users.txt", std::ios_base::in);
+					std::string line = "";
+					int is_user=0;
+					while(!fileUsers.eof()){
+						getline(fileUsers,line);
+						char* newline = strdup(line.c_str());
+						char* usern = strtok(newline,":");
+						char* pwd = strtok(NULL,":");
+						if (usern != NULL && pwd != NULL){
+							if (!strcmp(usern,registrationRequest->username) && !strcmp(pwd,registrationRequest->password)){ is_user = 1;
+							break;
+							}
+						}
+					}
+					fileUsers.close();
 
+					if (is_user) codeResponse.codeId = 200;
+					else  codeResponse.codeId = 205;
+					send(socket,&codeResponse,sizeof(code),0);
 				}
 				else {
+					printf("\nWe have a problem =(\n");
 					close(socket);
 					break;
 				}

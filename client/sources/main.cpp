@@ -28,6 +28,7 @@ int main(int argc, char const *argv[])
     int bufsize = 1024;
     char buffer[bufsize];
     header operation;
+    code* codeResponse;
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Socket creation error \n");
@@ -53,10 +54,25 @@ int main(int argc, char const *argv[])
         return -1;
     }
     printf("\n=>Connection to the server port\n");
+    do{
     printf("Registration:1\nLogin:2\n");
     scanf("%d",&operation.msgId);
-    printf("id %d",operation.msgId);
-
+    send(sock, &operation.msgId,sizeof(header),0);
+    recv( sock , buffer, 1024,0);
+    codeResponse = (code*) buffer;
+    }
+    while(codeResponse->codeId!=200);
+    registration user;
+    printf("\nYour username:");
+    scanf("%s",&user.username);
+    printf("\nYour password:");
+    scanf("%s",&user.password);
+    send(sock, &user,sizeof(registration),0);
+    recv( sock , buffer, 1024,0);
+    codeResponse = (code*) buffer;
+    if(codeResponse->codeId==200){
+    printf("\nSuccess \n");
+    }else printf("\nerror n/p \n");
     //send(sock , hello , strlen(hello) , 0 );
     //printf("Hello message sent\n");
     //valread = read( sock , buffer, 1024);
