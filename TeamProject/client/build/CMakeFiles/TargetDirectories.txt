@@ -1,7 +1,0 @@
-/home/student/Pulpit/Grupa_6/TeamProject/client/build/CMakeFiles/install.dir
-/home/student/Pulpit/Grupa_6/TeamProject/client/build/CMakeFiles/list_install_components.dir
-/home/student/Pulpit/Grupa_6/TeamProject/client/build/CMakeFiles/rebuild_cache.dir
-/home/student/Pulpit/Grupa_6/TeamProject/client/build/CMakeFiles/client.dir
-/home/student/Pulpit/Grupa_6/TeamProject/client/build/CMakeFiles/edit_cache.dir
-/home/student/Pulpit/Grupa_6/TeamProject/client/build/CMakeFiles/install/strip.dir
-/home/student/Pulpit/Grupa_6/TeamProject/client/build/CMakeFiles/install/local.dir

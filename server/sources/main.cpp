@@ -8,11 +8,18 @@
 #include <thread>
 #include <iostream>
 #include <fstream>
+#include <map>
+#include <mutex>
 
 #define PORT 8080
 
+std::mutex plik;
+//std::map<>
+
 struct header{
-	int msgId;
+	unsigned int msgId;
+	unsigned int contentSize;
+	char payLoad[1];
 };
 
 
@@ -20,27 +27,40 @@ struct code{
   int codeId;
 };
 
-struct registration{
+struct user{
   char username[20];
   char password[20];
 };
-
+int existUsername(const char* curentUsername){
+	std::ifstream fileUsers;
+	fileUsers.open("../users.txt", std::ios_base::in);
+	std::string line = "";
+	while(!fileUsers.eof()){
+		getline(fileUsers,line);
+		char* newline = strdup(line.c_str());
+		char* usern = strtok(newline,":");
+		if (usern != NULL)
+		if (strcmp(curentUsername,usern)==0) return 1;
+	}
+	return 0;
+}
 void thread_client(int socket){
+			printf("theard_client %d",socket);
 			char buffer[1024];
 			while(1) {
 				recv( socket , buffer, 1024,0);
 
-				//memset(buffer, 0, sizeof buffer);
 				header* headerRequest = (header*) buffer;
-
+				code codeResponse;
+				printf("I work\n");
 				if(headerRequest->msgId == 1){
-					code codeResponse;
+				
 
 					codeResponse.codeId = 200;
 					send(socket,&codeResponse,sizeof(code),0);
 
 					recv( socket , buffer, 1024,0);
-					registration* registrationRequest = (registration*) buffer;
+					user* registrationRequest = (user*) buffer;
 
 					//zapis do pliku
 					std::ofstream fileUsers;
@@ -53,9 +73,38 @@ void thread_client(int socket){
 
 				}
 				else if(headerRequest->msgId == 2){
+					
 
+					codeResponse.codeId = 200;
+					send(socket,&codeResponse,sizeof(code),0);
+
+					recv( socket , buffer, 1024,0);
+					user* registrationRequest = (user*) buffer;
+
+					//odczyt z pliku
+					std::ifstream fileUsers;
+					fileUsers.open("../users.txt", std::ios_base::in);
+					std::string line = "";
+					int is_user=0;
+					while(!fileUsers.eof()){
+						getline(fileUsers,line);
+						char* newline = strdup(line.c_str());
+						char* usern = strtok(newline,":");
+						char* pwd = strtok(NULL,":");
+						if (usern != NULL && pwd != NULL){
+							if (!strcmp(usern,registrationRequest->username) && !strcmp(pwd,registrationRequest->password)){ is_user = 1;
+							break;
+							}
+						}
+					}
+					fileUsers.close();
+
+					if (is_user) codeResponse.codeId = 200;
+					else  codeResponse.codeId = 205;
+					send(socket,&codeResponse,sizeof(code),0);
 				}
 				else {
+					printf("\nWe have a problem =(\n");
 					close(socket);
 					break;
 				}
@@ -66,11 +115,11 @@ void thread_client(int socket){
 
 int main(int argc, char const *argv[])
 {
-    int server_fd, new_socket, valread;
+    int server_fd, new_socket;
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
-    char buffer[1024] = {0};
+    char buffer[1024];
 
 		//tworzenie pliku
 		std::ifstream ifile("../users.txt");
@@ -93,6 +142,8 @@ int main(int argc, char const *argv[])
         perror("setsockopt");
         exit(EXIT_FAILURE);
     }
+
+    printf("\n=>Socket server has been created...\n");
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons( PORT );
@@ -109,21 +160,19 @@ int main(int argc, char const *argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
-
+	std::cout<<"exist:"<<existUsername("tam");
 while(1){
-
+	printf("while\n");
     if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
                        (socklen_t*)&addrlen))<0)
     {
-        perror("accept");
+        perror("accept error");
         exit(EXIT_FAILURE);
     }
-		std::cout << new_socket << '\n';
-
+		printf("=>Connected new client :socket_id = %d\n",new_socket);
+		
 		std::thread t(thread_client,new_socket);
 		t.detach();
-    //send(new_socket , hello , strlen(hello) , 0 );
-    //printf("disconnected\n");
 
 	}
     return 0;
