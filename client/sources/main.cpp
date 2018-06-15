@@ -5,12 +5,16 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <thread>
 #define PORT 8080
   
 struct msg_header{
 	unsigned int msgId;
 };
-
+struct msg{
+  char name[20];
+  char content[255];
+};
 
 struct code{
   int codeId;
@@ -21,6 +25,15 @@ struct msg_auth{
   char username[20];
   char password[20];
 };
+
+void listen_server(int socket){
+	char buffer[1024];
+	if(recv(socket , buffer, sizeof(msg),0)>0){
+			msg* message =(msg*) buffer;
+			printf("Message form %s\n", message->name);
+			printf("Message content\n->%s\n",message->content);
+	}
+}
 
 int main(int argc, char const *argv[])
 {
@@ -56,31 +69,43 @@ int main(int argc, char const *argv[])
     }
     printf("\nConnection to the server port\n");
     do{
-    int choice;
-    printf("Registration:1\nLogin:2\n");
-    scanf("%d", &choice);
-    if(choice!= 1 && choice!= 2){
-    printf("Don`t understand\n");
-    continue;
-    }
-    msg_auth user;
-    printf("\nYour username:");
-    scanf("%s",user.username);
-    printf("\nYour password:");
-    scanf("%s",user.password);
-    user.header.msgId = choice;
-    send(sock, &user ,sizeof(msg_auth),0);
-    recv(sock , buffer, 1024,0);
-    code* codeResponse = (code*) buffer;
-    if(codeResponse->codeId==200){
-    printf("\nSuccess \n");
-    logged=true;
-    strcpy(nameUser, user.username);
-    }
-    if(codeResponse->codeId==201) printf("\nusername exist \n");
-    else printf("\nError\n");
-    while(!logged);
+    	int choice;
+    	printf("Registration:1\nLogin:2\n");
+    	scanf("%d", &choice);
+    	if(choice!= 1 && choice!= 2){
+    	printf("Don`t understand\n");
+    	continue;
+    	}
+    	msg_auth user;
+    	printf("\nYour username:");
+    	scanf("%s",user.username);
+    	printf("\nYour password:");
+    	scanf("%s",user.password);
+    	user.header.msgId = choice;
+    	send(sock, &user ,sizeof(msg_auth),0);
+    	recv(sock , buffer, 1024,0);
+    	code* codeResponse = (code*) buffer;
+    	if(codeResponse->codeId==200){
+    		printf("\nSuccess \n");
+    		logged=true;
+    		strcpy(nameUser, user.username);
+    	}
+    	else if(codeResponse->codeId==201) printf("\nusername exist \n");
+    	else printf("\nError\n");
+    }while(!logged);
     printf("Hello, %s\n", nameUser);
+    while(1){
+    msg message;
+    printf("\nYour message: ");
+    scanf("%s", message.content);
+    if(strcmp(message.content, ";")==0) {
+    	printf("Exit\n");    
+    	break;
+    }
+    strcpy(message.name,nameUser);
+    if(send(sock, &message ,sizeof(message),0)>0) printf("Message sent\n");
+    listen_server(sock);
+    }
     char hello[]="Hello\n";
     send(sock,hello,sizeof(hello),0);
 

@@ -8,13 +8,14 @@
 #include <thread>
 #include <iostream>
 #include <fstream>
-#include <map>
 #include <mutex>
+#include <vector>
 
 #define PORT 8080
 
 std::mutex plik;
-std::map<std::string, int> usersOnline;
+std::mutex vect;
+std::vector<int> usersOnline;
 // msgId:
 // 1:register
 // 2:login
@@ -24,7 +25,10 @@ struct msg_header{
 	unsigned int msgId;
 };
 
-
+struct msg{
+  char name[20];
+  char content[255];
+};
 struct code{
   int codeId;
 };
@@ -53,16 +57,18 @@ int existUsername(const char* curentUsername){
 	return 0;
 }
 void thread_client(int socket){
-			printf("theard_client %d\n",socket);
-			char buffer[1024];
-			char nameUser[20]="";
-			bool logged = false;
+		printf("theard_client %d\n",socket);
+		char buffer[1024];
+		char nameUser[20]="";
+		int error,logged;
+		while(!error){
 			while(!logged) {
 				recv( socket , buffer, 1024,0);
 				msg_auth* authRequest = (msg_auth*) buffer;
 				code codeResponse;
 				printf("I work\n");
 				if(authRequest->header.msgId == 1){
+					printf("try to register\n");
 					std::lock_guard<std::mutex> lock(plik);
 					if(!existUsername(authRequest->username)){
 					//zapis do pliku
@@ -72,7 +78,9 @@ void thread_client(int socket){
 						fileUsers.close();
 						codeResponse.codeId = 200;
 						send(socket,&codeResponse,sizeof(code),0);
-						logged = true;
+						logged = 1;
+						usersOnline.push_back(socket);
+						printf("Add sock %d to vector",socket);
 						strcpy(nameUser, authRequest->username);
 					}else{
 						codeResponse.codeId = 201;
@@ -81,6 +89,7 @@ void thread_client(int socket){
 
 				}
 				else if(authRequest->header.msgId == 2){
+					printf("try to login\n");
 					std::lock_guard<std::mutex> lock(plik);
 					//odczyt z pliku
 					std::ifstream fileUsers;
@@ -93,7 +102,7 @@ void thread_client(int socket){
 						char* pwd = strtok(NULL,":");
 						if (usern != NULL && pwd != NULL){
 							if (!strcmp(usern,authRequest->username) && !strcmp(pwd,authRequest->password)){ 
-							logged = true;
+							logged = 1;
 							break;
 							}
 						}
@@ -103,7 +112,10 @@ void thread_client(int socket){
 					if (logged){
 						strcpy(nameUser, authRequest->username);
 						codeResponse.codeId = 200;
+						usersOnline.push_back(socket);
+						printf("Add sock %d to vector\n",socket);
 						send(socket,&codeResponse,sizeof(code),0);
+						
 					}
 					else  codeResponse.codeId = 205;
 					send(socket,&codeResponse,sizeof(code),0);
@@ -111,14 +123,31 @@ void thread_client(int socket){
 				else {
 					printf("\nWe have a problem =(\n");
 					printf("\nauthRequest->header.msgId !=(1,2)\n");
-					close(socket);
+					error = 1;
+					
 					break;
 				}
 
 			}
+			if (logged!=1) { 
+				error = 1; break;
+			}
 			printf("I connected user:%s \n",nameUser); 
+			while(recv( socket , buffer, 1024,0)>0){
+				printf("sent message socket: %d\n",socket);
+				msg* message_n =(msg*) buffer;
+				msg message = *message_n;
+				std::lock_guard<std::mutex> lock(vect);
+				for(int &sock : usersOnline){
+					if(sock !=socket) {
+						send(sock, &message, sizeof(msg),0);
+						printf("sent message to %d\n", sock);
+					}				
+				}			
+			}
 			
-
+		}
+close(socket);
 }
 
 int main(int argc, char const *argv[])
@@ -164,23 +193,23 @@ int main(int argc, char const *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 100) < 0)
+    if (listen(server_fd, 200) < 0)
     {
         perror("listen");
         exit(EXIT_FAILURE);
     }
-while(1){
-    if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
+    while(1){
+   	 if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
                        (socklen_t*)&addrlen))<0)
-    {
-        perror("accept error");
-        exit(EXIT_FAILURE);
-    }
-		printf("=>Connected new client :socket_id = %d\n",new_socket);
-		std::thread t(thread_client,new_socket);
-		t.detach();
+  	  {
+   	     perror("accept error");
+  	      exit(EXIT_FAILURE);
+  	  }
+	  printf("=>Connected new client :socket_id = %d\n",new_socket);
+	  std::thread t(thread_client,new_socket);
+	  t.detach();
 
-	}
+}
     return 0;
 }
 
