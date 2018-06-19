@@ -77,12 +77,10 @@ int main(int argc, char const *argv[])
     logged=true;
     strcpy(nameUser, user.username);
     }
-    if(codeResponse->codeId==201) printf("\nusername exist \n");
+    else if(codeResponse->codeId==201) printf("\nusername exist \n");
     else printf("\nError\n");
-    while(!logged);
+    }while(!logged);
     printf("Hello, %s\n", nameUser);
-    char hello[]="Hello\n";
-    send(sock,hello,sizeof(hello),0);
 
     return 0;
 }

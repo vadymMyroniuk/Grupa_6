@@ -9,7 +9,7 @@ set(PROJECT_SOURCE_DIR ${client_SOURCE_DIR}/sources)
 
 #zrobienie listy source'ow
 set(MAIN_SRCS
-${PROJECT_SOURCE_DIR}/main.cpp
+${PROJECT_SOURCE_DIR}/client.cpp
 )
 
 #skladanie executable

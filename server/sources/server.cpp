@@ -14,12 +14,7 @@
 #define PORT 8080
 
 std::mutex plik;
-std::map<std::string, int> usersOnline;
-// msgId:
-// 1:register
-// 2:login
-// 3:exit
-// 
+
 struct msg_header{
 	unsigned int msgId;
 };
@@ -53,7 +48,6 @@ int existUsername(const char* curentUsername){
 	return 0;
 }
 void thread_client(int socket){
-			printf("theard_client %d\n",socket);
 			char buffer[1024];
 			char nameUser[20]="";
 			bool logged = false;
@@ -61,7 +55,6 @@ void thread_client(int socket){
 				recv( socket , buffer, 1024,0);
 				msg_auth* authRequest = (msg_auth*) buffer;
 				code codeResponse;
-				printf("I work\n");
 				if(authRequest->header.msgId == 1){
 					std::lock_guard<std::mutex> lock(plik);
 					if(!existUsername(authRequest->username)){
@@ -110,7 +103,6 @@ void thread_client(int socket){
 				}
 				else {
 					printf("\nWe have a problem =(\n");
-					printf("\nauthRequest->header.msgId !=(1,2)\n");
 					close(socket);
 					break;
 				}
