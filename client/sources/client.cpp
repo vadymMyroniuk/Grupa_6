@@ -7,8 +7,8 @@
 #include <arpa/inet.h>
 #define PORT 8080
   
-struct header{
-	int msgId;
+struct msg_header{
+	unsigned int msgId;
 };
 
 
@@ -16,19 +16,20 @@ struct code{
   int codeId;
 };
 
-struct registration{
+struct msg_auth{
+  msg_header header;
   char username[20];
   char password[20];
 };
 
 int main(int argc, char const *argv[])
 {
-    int sock = 0, valread;
+    int sock = 0;
     struct sockaddr_in serv_addr;
     int bufsize = 1024;
+    char nameUser[20];
+    bool logged = false;
     char buffer[bufsize];
-    header operation;
-    code* codeResponse;
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Socket creation error \n");
@@ -53,29 +54,33 @@ int main(int argc, char const *argv[])
         printf("\nConnection Failed \n");
         return -1;
     }
-    printf("\n=>Connection to the server port\n");
+    printf("\nConnection to the server port\n");
     do{
+    int choice;
     printf("Registration:1\nLogin:2\n");
-    scanf("%d",&operation.msgId);
-    send(sock, &operation.msgId,sizeof(header),0);
-    recv( sock , buffer, 1024,0);
-    codeResponse = (code*) buffer;
+    scanf("%d", &choice);
+    if(choice!= 1 && choice!= 2){
+    printf("Don`t understand\n");
+    continue;
     }
-    while(codeResponse->codeId!=200);
-    registration user;
+    msg_auth user;
     printf("\nYour username:");
-    scanf("%s",&user.username);
+    scanf("%s",user.username);
     printf("\nYour password:");
-    scanf("%s",&user.password);
-    send(sock, &user,sizeof(registration),0);
-    recv( sock , buffer, 1024,0);
-    codeResponse = (code*) buffer;
+    scanf("%s",user.password);
+    user.header.msgId = choice;
+    send(sock, &user ,sizeof(msg_auth),0);
+    recv(sock , buffer, 1024,0);
+    code* codeResponse = (code*) buffer;
     if(codeResponse->codeId==200){
     printf("\nSuccess \n");
-    }else printf("\nerror n/p \n");
-    //send(sock , hello , strlen(hello) , 0 );
-    //printf("Hello message sent\n");
-    //valread = read( sock , buffer, 1024);
-    //printf("%s\n",buffer );
+    logged=true;
+    strcpy(nameUser, user.username);
+    }
+    else if(codeResponse->codeId==201) printf("\nusername exist \n");
+    else printf("\nError\n");
+    }while(!logged);
+    printf("Hello, %s\n", nameUser);
+
     return 0;
 }
