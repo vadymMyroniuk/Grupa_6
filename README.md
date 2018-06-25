@@ -1,2 +1,2 @@
 # Grupa_6
-Client-Server application
+Client-Server application with Socket
