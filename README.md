@@ -1,2 +1,2 @@
-# Grupa_6
+# C++ Application 
 Client-Server application with Socket
